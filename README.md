@@ -2,13 +2,13 @@
 Hub of my robotics projects
 ## Obstacle avoidance car
 ### Hardware 
--Raspberry Pi
--Motor Driver
--Ultrasonic Sensor
--9V Battery
--Motors
--Breadboard
--Connecting Wires
+- Raspberry Pi
+- Motor Driver
+- Ultrasonic Sensor
+- 9V Battery
+- Motors
+- Breadboard
+- Connecting Wires
 ### Visual electrical diagram
 <img width="887" height="679" alt="image" src="https://github.com/user-attachments/assets/ac6e3486-5801-48da-ad94-f33ab7b4479c" />
 ### Electrical diagram
