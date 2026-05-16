@@ -48,7 +48,7 @@ Then open `http://localhost:5000` in your browser.
 - 🗺️ Real-time environment mapping
 - 🎮 Web-based control interface
 - 📊 Live gyroscope & accelerometer data
-- 🤖 AI-guided navigation (Claude API)
+- 🤖 AI-guided navigation
 - 🚗 Autonomous obstacle avoidance
 
 ## Project Structure
