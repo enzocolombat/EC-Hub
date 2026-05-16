@@ -1,0 +1,27 @@
+# Python - fichiers générés automatiquement
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Environnement virtuel
+.venv/
+venv/
+env/
+
+# VS Code
+.vscode/
+
+# Variables d'environnement et secrets
+.env
+secrets.py
+config.py
+
+# Logs
+*.log
+logs/
+
+# Système
+.DS_Store
+Thumbs.db
