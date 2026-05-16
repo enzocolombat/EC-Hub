@@ -9,7 +9,6 @@ Hub of my robotics projects
 - Motors
 - Breadboard
 - Connecting Wires
-### Visual electrical diagram
-<img width="887" height="679" alt="image" src="https://github.com/user-attachments/assets/ac6e3486-5801-48da-ad94-f33ab7b4479c" />
 ### Electrical diagram
-<img width="1209" height="725" alt="image" src="https://github.com/user-attachments/assets/48903aa3-71a5-4b64-9e7e-f8c578d182c1" />
+<img width="3000" height="1995" alt="Electrical diagram" src="https://github.com/user-attachments/assets/ecfe6f4a-8edb-4343-bbda-1d64ff7cda23" />
+https://app.cirkitdesigner.com/project/c312c10f-f63f-401c-b78d-33313f44d202
