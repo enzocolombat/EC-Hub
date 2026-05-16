@@ -13,6 +13,22 @@ An autonomous robot built on Raspberry Pi 3B, capable of mapping its environment
 - 4x DC Motors
 - 4-wheel chassis
 
+## Installation
+
+### On the Raspberry Pi
+
+```bash
+git clone https://github.com/enzocolombat/EnzoColombat-s-hub.git
+cd EnzoColombat-s-hub
+pip install -r requirements-pi.txt
+```
+### On the PC
+
+```bash
+git clone https://github.com/enzocolombat/EnzoColombat-s-hub.git
+cd EnzoColombat-s-hub
+pip install -r requirements-pc.txt
+```
 ### Electrical diagram
 
 <img width="3000" height="1995" alt="Electrical diagram" src="https://github.com/user-attachments/assets/ecfe6f4a-8edb-4343-bbda-1d64ff7cda23" />
