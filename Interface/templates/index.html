@@ -7,12 +7,10 @@
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-
     <header>
         <h1>Robot Control Panel UwU</h1>
         <span id="status" class="offline">Disconnected</span>
     </header>
-
     <main>
         <!-- Gyroscope card -->
         <div class="card" id="gyro-card">
@@ -22,13 +20,11 @@
             <p>Z: <span id="gz">--</span> °/s</p>
             <p>Temp: <span id="temp">--</span> °C</p>
         </div>
-
         <!-- Map card -->
         <div class="card" id="map-card">
             <h2>Map</h2>
             <canvas id="map"></canvas>
         </div>
-
         <!-- Controls card -->
         <div class="card" id="controls-card">
             <h2>Controls</h2>
@@ -41,29 +37,86 @@
             </div>
         </div>
     </main>
-
     <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
     <script>
-        const socket = io();
+        // --- Canvas setup ---
+        const canvas = document.getElementById("map")
+        const ctx = canvas.getContext("2d")
+        canvas.width = canvas.offsetWidth || 300
+        canvas.height = canvas.offsetHeight || 300
+
+        let robotX = canvas.width / 2
+        let robotY = canvas.height / 2
+        let robotAngle = 0
+
+        function drawRobot() {
+            // Fond
+            ctx.fillStyle = "#111"
+            ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+            // Grille
+            ctx.strokeStyle = "#222"
+            ctx.lineWidth = 1
+            for (let x = 0; x < canvas.width; x += 30) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke()
+            }
+            for (let y = 0; y < canvas.height; y += 30) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke()
+            }
+
+            // Robot (vue de dessus)
+            ctx.save()
+            ctx.translate(robotX, robotY)
+            ctx.rotate(robotAngle)
+
+            // Corps principal
+            ctx.fillStyle = "#333"
+            ctx.fillRect(-18, -22, 36, 44)
+
+            // Roues
+            ctx.fillStyle = "#00ff88"
+            ctx.fillRect(-24, -18, 8, 12)  // avant gauche
+            ctx.fillRect(16, -18, 8, 12)   // avant droite
+            ctx.fillRect(-24, 6, 8, 12)    // arrière gauche
+            ctx.fillRect(16, 6, 8, 12)     // arrière droite
+
+            // Flèche de direction
+            ctx.fillStyle = "#ffffff"
+            ctx.beginPath()
+            ctx.moveTo(0, -18)
+            ctx.lineTo(7, -8)
+            ctx.lineTo(-7, -8)
+            ctx.closePath()
+            ctx.fill()
+
+            ctx.restore()
+        }
+
+        // --- SocketIO ---
+        const socket = io()
 
         socket.on("connect", () => {
             document.getElementById("status").className = "online"
             document.getElementById("status").innerHTML = "Connected"
-        });
+        })
 
         socket.on("disconnect", () => {
             document.getElementById("status").className = "offline"
             document.getElementById("status").innerHTML = "Disconnected"
-        });
+        })
 
         socket.on("gyro", function(data) {
             document.getElementById("gx").innerHTML = data.gyro.x.toFixed(2)
             document.getElementById("gy").innerHTML = data.gyro.y.toFixed(2)
             document.getElementById("gz").innerHTML = data.gyro.z.toFixed(2)
             document.getElementById("temp").innerHTML = data.temp
-        });
-    
-                // Mapping touches → boutons
+
+            // Intégration vitesse angulaire → angle
+            robotAngle += data.gyro.z * 0.05 * (Math.PI / 180)
+            drawRobot()
+        })
+
+        // --- Contrôles clavier ---
         const keyMap = {
             "ArrowUp":    "forward",
             "ArrowDown":  "backward",
@@ -76,7 +129,7 @@
             const action = keyMap[e.key]
             if (action) {
                 document.getElementById("btn-" + action).classList.add("active")
-                socket.emit("command", {action: action, speed: 60})
+                socket.emit("command", { action: action, speed: 60 })
             }
         })
 
@@ -84,10 +137,12 @@
             const action = keyMap[e.key]
             if (action) {
                 document.getElementById("btn-" + action).classList.remove("active")
-                socket.emit("command", {action: "stop", speed: 0})
+                socket.emit("command", { action: "stop", speed: 0 })
             }
         })
-    </script>
 
+        // Premier dessin
+        drawRobot()
+    </script>
 </body>
 </html>
