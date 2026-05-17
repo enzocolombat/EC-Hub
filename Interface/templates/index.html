@@ -9,7 +9,7 @@
 <body>
 
     <header>
-        <h1>Robot Control Panel</h1>
+        <h1>Robot Control Panel UwU</h1>
         <span id="status" class="offline">Disconnected</span>
     </header>
 
@@ -62,28 +62,29 @@
             document.getElementById("gz").innerHTML = data.gyro.z.toFixed(2)
             document.getElementById("temp").innerHTML = data.temp
         });
+    
                 // Mapping touches → boutons
         const keyMap = {
-            "ArrowUp":    "btn-forward",
-            "ArrowDown":  "btn-backward",
-            "ArrowLeft":  "btn-left",
-            "ArrowRight": "btn-right",
-            " ":          "btn-stop"  // espace pour stop
+            "ArrowUp":    "forward",
+            "ArrowDown":  "backward",
+            "ArrowLeft":  "left",
+            "ArrowRight": "right",
+            " ":          "stop"
         }
 
-        // Quand une touche est enfoncée
         document.addEventListener("keydown", function(e) {
-            const btnId = keyMap[e.key]
-            if (btnId) {
-                document.getElementById(btnId).classList.add("active")
+            const action = keyMap[e.key]
+            if (action) {
+                document.getElementById("btn-" + action).classList.add("active")
+                socket.emit("command", {action: action, speed: 60})
             }
         })
 
-        // Quand une touche est relâchée
         document.addEventListener("keyup", function(e) {
-            const btnId = keyMap[e.key]
-            if (btnId) {
-                document.getElementById(btnId).classList.remove("active")
+            const action = keyMap[e.key]
+            if (action) {
+                document.getElementById("btn-" + action).classList.remove("active")
+                socket.emit("command", {action: "stop", speed: 0})
             }
         })
     </script>

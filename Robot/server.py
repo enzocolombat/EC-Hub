@@ -18,6 +18,12 @@ def on_connect():
     thread = threading.Thread(target=gyro_event, daemon=True)
     thread.start() 
 
+@socketio.on("command")
+def on_command(data):
+    #print(data)
+    print(data["action"])  # "forward"
+    print(data["speed"])   # 60
+
 
 def gyro_event():
     while True:
