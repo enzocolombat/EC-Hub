@@ -1,17 +1,15 @@
-/* Reset — supprime les marges par défaut du navigateur */
+/* Reset — removes default browser margins */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
-
 /* Global */
 body {
     background: #0f0f0f;
     color: #ffffff;
     font-family: monospace;
 }
-
 /* Header */
 header {
     display: flex;
@@ -20,11 +18,9 @@ header {
     padding: 1rem 2rem;
     border-bottom: 1px solid #333;
 }
-
 /* Status badge */
 .online  { color: #00ff88; }
 .offline { color: #ff4444; }
-
 /* Main layout */
 main {
     display: grid;
@@ -32,7 +28,6 @@ main {
     gap: 1rem;
     padding: 1rem;
 }
-
 /* Cards */
 .card {
     background: #1a1a1a;
@@ -40,7 +35,6 @@ main {
     border-radius: 8px;
     padding: 1rem;
 }
-
 .card h2 {
     margin-bottom: 1rem;
     color: #00ff88;
@@ -48,7 +42,6 @@ main {
     text-transform: uppercase;
     letter-spacing: 2px;
 }
-
 /* Controls */
 .controls {
     display: grid;
@@ -57,14 +50,12 @@ main {
     gap: 0.5rem;
     margin-top: 1rem;
 }
-
-/* Positionne chaque bouton dans la grille */
+/* Position each button in the grid */
 #btn-forward  { grid-column: 2; grid-row: 1; }
 #btn-left     { grid-column: 1; grid-row: 2; }
 #btn-stop     { grid-column: 2; grid-row: 2; }
 #btn-right    { grid-column: 3; grid-row: 2; }
 #btn-backward { grid-column: 2; grid-row: 3; }
-
 button {
     background: #222;
     color: white;
@@ -80,7 +71,6 @@ button.active {
 }
 button:hover { background: #333; }
 button:active { background: #00ff88; color: #000; }
-
 /* Canvas map */
 #map {
     width: 100%;
@@ -88,13 +78,11 @@ button:active { background: #00ff88; color: #000; }
     background: #111;
     border-radius: 4px;
 }
-
 /* Status indicator */
 .online, .offline {
     padding: 4px 12px;
     border-radius: 20px;
     font-size: 0.8rem;
 }
-
 .online  { background: #00ff8822; }
 .offline { background: #ff444422; }

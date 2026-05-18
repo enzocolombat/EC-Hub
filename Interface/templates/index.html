@@ -50,11 +50,11 @@
         let robotAngle = 0
 
         function drawRobot() {
-            // Fond
+            // Background
             ctx.fillStyle = "#111"
             ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-            // Grille
+            // Grid
             ctx.strokeStyle = "#222"
             ctx.lineWidth = 1
             for (let x = 0; x < canvas.width; x += 30) {
@@ -64,23 +64,23 @@
                 ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke()
             }
 
-            // Robot (vue de dessus)
+            // Robot (top view)
             ctx.save()
             ctx.translate(robotX, robotY)
             ctx.rotate(robotAngle)
 
-            // Corps principal
+            // Main body
             ctx.fillStyle = "#333"
             ctx.fillRect(-18, -22, 36, 44)
 
-            // Roues
+            // Wheels
             ctx.fillStyle = "#00ff88"
-            ctx.fillRect(-24, -18, 8, 12)  // avant gauche
-            ctx.fillRect(16, -18, 8, 12)   // avant droite
-            ctx.fillRect(-24, 6, 8, 12)    // arrière gauche
-            ctx.fillRect(16, 6, 8, 12)     // arrière droite
+            ctx.fillRect(-24, -18, 8, 12)  // front left
+            ctx.fillRect(16, -18, 8, 12)   // front right
+            ctx.fillRect(-24, 6, 8, 12)    // rear left
+            ctx.fillRect(16, 6, 8, 12)     // rear right
 
-            // Flèche de direction
+            // Direction arrow
             ctx.fillStyle = "#ffffff"
             ctx.beginPath()
             ctx.moveTo(0, -18)
@@ -111,12 +111,12 @@
             document.getElementById("gz").innerHTML = data.gyro.z.toFixed(2)
             document.getElementById("temp").innerHTML = data.temp
 
-            // Intégration vitesse angulaire → angle
+            // Integrate angular velocity → angle
             robotAngle += data.gyro.z * 0.05 * (Math.PI / 180)
             drawRobot()
         })
 
-        // --- Contrôles clavier ---
+        // --- Keyboard controls ---
         const keyMap = {
             "ArrowUp":    "forward",
             "ArrowDown":  "backward",
@@ -129,7 +129,7 @@
 
         document.addEventListener("keydown", function(e) {
             const action = keyMap[e.key]
-            if (action && !moveInterval) {  // !moveInterval évite de lancer plusieurs intervalles
+            if (action && !moveInterval) {  // !moveInterval prevents launching multiple intervals
                 document.getElementById("btn-" + action).classList.add("active")
                 socket.emit("command", { action: action, speed: 60 })
 
@@ -142,8 +142,14 @@
                         robotX -= Math.sin(robotAngle) * 3
                         robotY += Math.cos(robotAngle) * 3
                     }
+                    if (action === "left") {
+                        robotAngle -= 0.05  // rotate left
+                    }
+                    if (action === "right") {
+                        robotAngle += 0.05  // rotate right
+                    }
                     drawRobot()
-                }, 50)  // toutes les 50ms
+                }, 50)  // every 50ms
             }
         })
 
@@ -152,12 +158,12 @@
             if (action) {
                 document.getElementById("btn-" + action).classList.remove("active")
                 socket.emit("command", { action: "stop", speed: 0 })
-                clearInterval(moveInterval)  // arrête le mouvement
+                clearInterval(moveInterval)  // stop movement
                 moveInterval = null
             }
         })
 
-        // Premier dessin
+        // Initial draw
         drawRobot()
     </script>
 </body>
