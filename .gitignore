@@ -17,7 +17,7 @@ env/
 .env
 secrets.py
 config.py
-
+Playground/
 # Logs
 *.log
 logs/
