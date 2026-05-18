@@ -1,10 +1,30 @@
 # EnzoColombat's hub
 Hub of my robotics projects
-## Obstacle avoidance car
+# Obstacle avoidance car
 
 An autonomous robot built on Raspberry Pi 3B, capable of mapping its environment and being guided by artificial intelligence.
+## Current State
 
-## Hardware Requirements
+### Working
+- Real-time gyroscope data streaming (MPU-6050 → Pi → Browser)
+- Bidirectional communication via Flask + SocketIO
+- Robot simulation on 2D canvas (rotation via gyro Z axis)
+- Keyboard controls (arrow keys) with visual feedback
+- Command sending from browser to Pi (action + speed)
+
+### Hardware
+- Raspberry Pi 3B
+- MPU-6050 (gyroscope + accelerometer)
+- HC-SR04P ultrasonic sensor (pending integration)
+
+### Coming Soon
+- DC motors + L298N wiring and control
+- HC-020K encoders for real odometry
+- Ultrasonic sensor for obstacle detection and mapping
+- AI guidance
+
+## Project
+### Hardware Requirements
 
 - Raspberry Pi 3B
 - Gyroscope/Accelerometer MPU-6050
