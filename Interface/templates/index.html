@@ -8,11 +8,10 @@
 </head>
 <body>
     <header>
-        <h1>Robot Control Panel UwU</h1>
+        <h1>Robot Control Panel</h1>
         <span id="status" class="offline">Disconnected</span>
     </header>
     <main>
-        <!-- Gyroscope card -->
         <div class="card" id="gyro-card">
             <h2>Gyroscope</h2>
             <p>X: <span id="gx">--</span> °/s</p>
@@ -20,12 +19,10 @@
             <p>Z: <span id="gz">--</span> °/s</p>
             <p>Temp: <span id="temp">--</span> °C</p>
         </div>
-        <!-- Map card -->
         <div class="card" id="map-card">
             <h2>Map</h2>
             <canvas id="map"></canvas>
         </div>
-        <!-- Controls card -->
         <div class="card" id="controls-card">
             <h2>Controls</h2>
             <div class="controls">
@@ -38,133 +35,8 @@
         </div>
     </main>
     <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
-    <script>
-        // --- Canvas setup ---
-        const canvas = document.getElementById("map")
-        const ctx = canvas.getContext("2d")
-        canvas.width = canvas.offsetWidth || 300
-        canvas.height = canvas.offsetHeight || 300
-
-        let robotX = canvas.width / 2
-        let robotY = canvas.height / 2
-        let robotAngle = 0
-
-        function drawRobot() {
-            // Background
-            ctx.fillStyle = "#111"
-            ctx.fillRect(0, 0, canvas.width, canvas.height)
-
-            // Grid
-            ctx.strokeStyle = "#222"
-            ctx.lineWidth = 1
-            for (let x = 0; x < canvas.width; x += 30) {
-                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke()
-            }
-            for (let y = 0; y < canvas.height; y += 30) {
-                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke()
-            }
-
-            // Robot (top view)
-            ctx.save()
-            ctx.translate(robotX, robotY)
-            ctx.rotate(robotAngle)
-
-            // Main body
-            ctx.fillStyle = "#333"
-            ctx.fillRect(-18, -22, 36, 44)
-
-            // Wheels
-            ctx.fillStyle = "#00ff88"
-            ctx.fillRect(-24, -18, 8, 12)  // front left
-            ctx.fillRect(16, -18, 8, 12)   // front right
-            ctx.fillRect(-24, 6, 8, 12)    // rear left
-            ctx.fillRect(16, 6, 8, 12)     // rear right
-
-            // Direction arrow
-            ctx.fillStyle = "#ffffff"
-            ctx.beginPath()
-            ctx.moveTo(0, -18)
-            ctx.lineTo(7, -8)
-            ctx.lineTo(-7, -8)
-            ctx.closePath()
-            ctx.fill()
-
-            ctx.restore()
-        }
-
-        // --- SocketIO ---
-        const socket = io()
-
-        socket.on("connect", () => {
-            document.getElementById("status").className = "online"
-            document.getElementById("status").innerHTML = "Connected"
-        })
-
-        socket.on("disconnect", () => {
-            document.getElementById("status").className = "offline"
-            document.getElementById("status").innerHTML = "Disconnected"
-        })
-
-        socket.on("gyro", function(data) {
-            document.getElementById("gx").innerHTML = data.gyro.x.toFixed(2)
-            document.getElementById("gy").innerHTML = data.gyro.y.toFixed(2)
-            document.getElementById("gz").innerHTML = data.gyro.z.toFixed(2)
-            document.getElementById("temp").innerHTML = data.temp
-
-            // Integrate angular velocity → angle
-            robotAngle += data.gyro.z * 0.05 * (Math.PI / 180)
-            drawRobot()
-        })
-
-        // --- Keyboard controls ---
-        const keyMap = {
-            "ArrowUp":    "forward",
-            "ArrowDown":  "backward",
-            "ArrowLeft":  "left",
-            "ArrowRight": "right",
-            " ":          "stop"
-        }
-
-        let moveInterval = null
-
-        document.addEventListener("keydown", function(e) {
-            const action = keyMap[e.key]
-            if (action && !moveInterval) {  // !moveInterval prevents launching multiple intervals
-                document.getElementById("btn-" + action).classList.add("active")
-                socket.emit("command", { action: action, speed: 60 })
-
-                moveInterval = setInterval(function() {
-                    if (action === "forward") {
-                        robotX += Math.sin(robotAngle) * 3
-                        robotY -= Math.cos(robotAngle) * 3
-                    }
-                    if (action === "backward") {
-                        robotX -= Math.sin(robotAngle) * 3
-                        robotY += Math.cos(robotAngle) * 3
-                    }
-                    if (action === "left") {
-                        robotAngle -= 0.05  // rotate left
-                    }
-                    if (action === "right") {
-                        robotAngle += 0.05  // rotate right
-                    }
-                    drawRobot()
-                }, 50)  // every 50ms
-            }
-        })
-
-        document.addEventListener("keyup", function(e) {
-            const action = keyMap[e.key]
-            if (action) {
-                document.getElementById("btn-" + action).classList.remove("active")
-                socket.emit("command", { action: "stop", speed: 0 })
-                clearInterval(moveInterval)  // stop movement
-                moveInterval = null
-            }
-        })
-
-        // Initial draw
-        drawRobot()
-    </script>
+    <script type="module" src="/static/robot.js"></script>
+    <script type="module" src="/static/canvas.js"></script>
+    <script type="module" src="/static/socket.js"></script>
 </body>
 </html>
