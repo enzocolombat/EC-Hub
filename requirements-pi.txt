@@ -1,8 +1,10 @@
-# Capteurs
-mpu6050-raspberrypi==1.2.0   # bibliothèque du gyroscope MPU-6050
-RPi.GPIO==0.7.1               # contrôle des pins GPIO du Raspberry Pi
+# Sensors
+mpu6050-raspberrypi==1.2.0
+RPi.GPIO==0.7.1
 
-# Communication temps réel
-flask==3.0.0                  # serveur web
-flask-socketio==5.3.6         # communication temps réel
-python-dotenv==1.0.0          # gestion des secrets
+# Web server
+flask==3.0.0
+flask-socketio==5.3.6
+
+# Secrets management
+python-dotenv==1.0.0

@@ -1,8 +1,6 @@
-# Interface web
-flask==3.0.0                  # serveur web
-flask-socketio==5.3.6         # communication temps réel
-python-dotenv==1.0.0          # gestion des secrets
+# 3D visualization (cube gyroscope test)
+pygame==2.5.2
+PyOpenGL==3.1.7
 
-# Visualisation 3D (pour le cube gyroscope)
-pygame==2.5.2                 # fenêtre graphique
-PyOpenGL==3.1.7               # rendu 3D
+# Secrets management
+python-dotenv==1.0.0
