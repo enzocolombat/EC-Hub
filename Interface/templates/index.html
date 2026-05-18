@@ -125,11 +125,25 @@
             " ":          "stop"
         }
 
+        let moveInterval = null
+
         document.addEventListener("keydown", function(e) {
             const action = keyMap[e.key]
-            if (action) {
+            if (action && !moveInterval) {  // !moveInterval évite de lancer plusieurs intervalles
                 document.getElementById("btn-" + action).classList.add("active")
                 socket.emit("command", { action: action, speed: 60 })
+
+                moveInterval = setInterval(function() {
+                    if (action === "forward") {
+                        robotX += Math.sin(robotAngle) * 3
+                        robotY -= Math.cos(robotAngle) * 3
+                    }
+                    if (action === "backward") {
+                        robotX -= Math.sin(robotAngle) * 3
+                        robotY += Math.cos(robotAngle) * 3
+                    }
+                    drawRobot()
+                }, 50)  // toutes les 50ms
             }
         })
 
@@ -138,6 +152,8 @@
             if (action) {
                 document.getElementById("btn-" + action).classList.remove("active")
                 socket.emit("command", { action: "stop", speed: 0 })
+                clearInterval(moveInterval)  // arrête le mouvement
+                moveInterval = null
             }
         })
 
