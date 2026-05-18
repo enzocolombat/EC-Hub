@@ -22,6 +22,8 @@ An autonomous robot built on Raspberry Pi 3B, capable of mapping its environment
 - HC-020K encoders for real odometry
 - Ultrasonic sensor for obstacle detection and mapping
 - AI guidance
+### Interface 
+https://github.com/user-attachments/assets/d559aa59-24a0-41e6-a908-c51b7c77f7f3
 
 ## Project
 ### Hardware Requirements
