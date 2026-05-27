@@ -1,4 +1,4 @@
-# EnzoColombat's hub
+# Robotics Hub by Enzo Colombat – Raspberry Pi projects
 A showcase of robotics projects built on Raspberry Pi, featuring real-time sensor integration and web control.
 # Obstacle avoidance car
 
