@@ -17,6 +17,7 @@ env/
 .env
 secrets.py
 config.py
+client_secret.json
 Playground/
 # Logs
 *.log
