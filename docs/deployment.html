@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Déploiement – Robot Sensor Server</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Déploiement du Robot Sensor Server</h1>
+  </header>
+  <nav>
+    <a href="index.html">Accueil</a>
+    <a href="architecture.html">Architecture</a>
+    <a href="configuration.html">Configuration</a>
+    <a href="deployment.html">Déploiement</a>
+    <a href="api.html">API &amp; Extensions</a>
+  </nav>
+  <main>
+    <section>
+      <h2>Pré‑requis sur le Raspberry Pi</h2>
+      <ul>
+        <li>Python 3.9 ou supérieur</li>
+        <li>pip installé</li>
+        <li>Accès I²C activé (<code>sudo raspi-config → Interface Options → I2C → enable</code>)</li>
+        <li>Connexion réseau fonctionnelle (Wi‑Fi ou Ethernet)</li>
+      </ul>
+    </section>
+    <section>
+      <h2>Installation des dépendances sur le Pi</h2>
+      <pre><code># Sur le Pi
+sudo apt-get update && sudo apt-get install -y python3-venv git
+git clone https://github.com/<votre‑organisation>/robot-sensor-server.git
+cd robot-sensor-server
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+</code></pre>
+    </section>
+    <section>
+      <h2>Lancer le serveur</h2>
+      <pre><code># Option 1 – lancement manuel
+source .venv/bin/activate
+python -m Robot.server
+
+# Option 2 – service systemd (recommandé)
+# Créez /etc/systemd/system/robot-sensor.service avec le contenu suivant :
+[Unit]
+Description=Robot Sensor Server
+After=network.target
+
+[Service]
+WorkingDirectory=/home/pi/robot-sensor-server
+ExecStart=/home/pi/robot-sensor-server/.venv/bin/python -m Robot.server
+Restart=on-failure
+User=pi
+EnvironmentFile=/home/pi/robot-sensor-server/.env
+
+[Install]
+WantedBy=multi-user.target
+
+# Puis activez et démarrez :
+sudo systemctl daemon-reload
+sudo systemctl enable robot-sensor.service
+sudo systemctl start robot-sensor.service
+</code></pre>
+    </section>
+    <section>
+      <h2>Déploiement depuis Windows (script existant)</h2>
+      <p>Le fichier <code>deploy.bat</code> lit les variables <code>PI_USER</code>, <code>PI_PASS</code> et <code>PI_IP</code> depuis <code>.env</code> puis copie les fichiers via WinSCP.</p>
+      <p>Points à améliorer :</p>
+      <ul>
+        <li>Passer à un script multiplateforme (PowerShell ou Python) ; le batch ne fonctionne que sous Windows.</li>
+        <li>Ne pas stocker le mot de passe en clair dans <code>.env</code>. Utiliser des clés SSH ou un gestionnaire de secrets.</li>
+        <li>Ajouter la création d’un <code>virtualenv</code> et l’installation des dépendances sur le Pi après le transfert.</li>
+      </ul>
+    </section>
+    <section>
+      <h2>Docker (optionnel)</h2>
+      <pre><code># Dockerfile (à placer à la racine)
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+EXPOSE 5000
+CMD ["python", "-m", "Robot.server"]
+</code></pre>
+      <p>Construisez et lancez :</p>
+      <pre><code>docker build -t robot-sensor .
+docker run -d -p 5000:5000 --name robot-sensor robot-sensor
+</code></pre>
+    </section>
+  </main>
+  <footer>
+    © 2026 – Robot Sensor Server
+  </footer>
+</body>
+</html>

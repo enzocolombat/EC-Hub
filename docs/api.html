@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API &amp; Extensions – Robot Sensor Server</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>API &amp; Extensions</h1>
+  </header>
+  <nav>
+    <a href="index.html">Accueil</a>
+    <a href="architecture.html">Architecture</a>
+    <a href="configuration.html">Configuration</a>
+    <a href="deployment.html">Déploiement</a>
+    <a href="api.html">API &amp; Extensions</a>
+  </nav>
+  <main>
+    <section>
+      <h2>Endpoints HTTP</h2>
+      <ul>
+        <li><code>GET /</code> – renvoie <code>templates/index.html</code>.</li>
+        <li><code>POST /command</code> – reçoit un payload JSON <code>{"action": "forward|backward|…", "speed": <number>}</code>. Actuellement un placeholder qui consigne l’ordre.</li>
+      </ul>
+    </section>
+    <section>
+      <h2>Évènements Socket.IO</h2>
+      <ul>
+        <li><code>connect</code> – crée un flux dédié au client (thread ou coroutine).</li>
+        <li><code>disconnect</code> – nettoie le flux.</li>
+        <li><code>gyro</code> – envoyé toutes les <code>GYRO_SAMPLE_RATE</code> s avec la charge JSON :
+          <pre><code>{
+  "accel": {"x":…, "y":…, "z":…},
+  "gyro":  {"x":…, "y":…, "z":…},
+  "temp":  23.5
+}</code></pre>
+        </li>
+        <li><code>command</code> (client‑to‑server) – décrit ci‑dessus.</li>
+      </ul>
+    </section>
+    <section>
+      <h2>Extension future</h2>
+      <p>Le projet est prévu pour accueillir :</p>
+      <ul>
+        <li>Un système d’authentification JWT pour sécuriser les connexions Socket.IO.</li>
+        <li>Des contrôleurs de moteurs via la bibliothèque <code>gpiozero</code> ou <code>RPi.GPIO</code>.</li>
+        <li>Une API REST supplémentaire (ex. <code>/status</code>, <code>/metrics</code>) exposée avec <code>Flask‑RESTful</code>.</li>
+      </ul>
+    </section>
+  </main>
+  <footer>
+    © 2026 – Robot Sensor Server
+  </footer>
+</body>
+</html>

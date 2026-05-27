@@ -1,40 +1,37 @@
-"""Read and print accelerometer, gyroscope, and temperature values from an MPU6050."""
-
+import logging
 from mpu6050 import mpu6050
 
-# Initialize sensor at I2C address 0x68
-sensor = mpu6050(0x68)
+I2C_ADDRESS  = 0x68
+logger = logging.getLogger(__name__)
 
-def get_data():
+try:
+    _sensor = mpu6050(I2C_ADDRESS)
+except Exception as e:
+    # Allows server to start even when sensor is unplugged (e.g. on PC)
+    _sensor = None
+    logger.warning("MPU-6050 not found at 0x%02X: %s", I2C_ADDRESS, e)
+
+
+def get_data() -> dict | None:
     """
-    Reads all data from the MPU-6050 sensor.
-    
-    Returns:
-        dict: acceleration, gyroscope and temperature data
+    Read acceleration, gyroscope and temperature from the MPU-6050.
+
+    Returns None if the sensor is unavailable or the read fails,
+    so callers can skip the frame rather than crash.
     """
-    accel = sensor.get_accel_data()
-    gyro = sensor.get_gyro_data()
-    temp = sensor.get_temp()
+    if _sensor is None:
+        return None
+
+    try:
+        accel = _sensor.get_accel_data()
+        gyro  = _sensor.get_gyro_data()
+        temp  = _sensor.get_temp()
+    except Exception as e:
+        logger.error("MPU-6050 read failed: %s", e)
+        return None
 
     return {
         "accel": {"x": accel["x"], "y": accel["y"], "z": accel["z"]},
         "gyro":  {"x": gyro["x"],  "y": gyro["y"],  "z": gyro["z"]},
-        "temp":  round(temp, 2)
+        "temp":  round(temp, 2),
     }
-
-# try:  # Allows the loop to stop cleanly with Ctrl+C.
-    #while True:  # Continuously reads the sensor.
-     #   accel = sensor.get_accel_data()  # Reads acceleration on the X, Y, and Z axes.
-      #  gyro = sensor.get_gyro_data()  # Reads angular speed on the X, Y, and Z axes.
-       # temp = sensor.get_temp()  # Reads the internal sensor temperature.
-
-        #print(f"--- Accelerometre ---")  # Prints a label for acceleration values.
-        #print(f"X: {accel['x']:.2f}  Y: {accel['y']:.2f}  Z: {accel['z']:.2f}")  # Prints acceleration rounded to two decimals.
-        #print(f"--- Gyroscope ---")  # Prints a label for gyroscope values.
-        #print(f"X: {gyro['x']:.2f}  Y: {gyro['y']:.2f}  Z: {gyro['z']:.2f}")  # Prints angular speed rounded to two decimals.
-        #print(f"Temperature : {temp:.2f} C")  # Prints the sensor temperature in Celsius.
-        #print()  # Adds an empty line to make each reading block easier to read.
-        #time.sleep(0.5)  # Waits half a second before the next reading.
-
-#except KeyboardInterrupt:  # Catches Ctrl+C from the terminal.
-   # print("Arret")  # Confirms that the program is stopping.

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuration – Robot Sensor Server</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Configuration du projet</h1>
+  </header>
+  <nav>
+    <a href="index.html">Accueil</a>
+    <a href="architecture.html">Architecture</a>
+    <a href="configuration.html">Configuration</a>
+    <a href="deployment.html">Déploiement</a>
+    <a href="api.html">API &amp; Extensions</a>
+  </nav>
+  <main>
+    <section>
+      <h2>Variables d’environnement</h2>
+      <p>Le serveur lit les paramètres suivants depuis le fichier <code>.env</code> (ou les variables d’environnement du système) :</p>
+      <pre><code>HOST=0.0.0.0          # Adresse d’écoute du serveur Flask
+PORT=5000             # Port TCP du serveur
+GYRO_SAMPLE_RATE=0.05 # Intervalle de lecture du capteur en secondes (20 Hz)
+</code></pre>
+      <p>Ces variables sont importées dans <code>Robot/config.py</code> (à créer) afin de centraliser la configuration :</p>
+      <pre><code># Robot/config.py
+import os
+
+HOST = os.getenv("HOST", "0.0.0.0")
+PORT = int(os.getenv("PORT", "5000"))
+GYRO_SAMPLE_RATE = float(os.getenv("GYRO_SAMPLE_RATE", "0.05"))
+</code></pre>
+    </section>
+    <section>
+      <h2>Gestion du logging</h2>
+      <p>Un fichier de configuration JSON/YAML pour le module <code>logging</code> permet de contrôler le niveau et le format sans modifier le code :</p>
+      <pre><code># logging_config.json
+{
+  "version": 1,
+  "formatters": {
+    "standard": {"format": "% (asctime)s %(levelname)s %(name)s %(message)s"}
+  },
+  "handlers": {
+    "console": {"class": "logging.StreamHandler", "formatter": "standard", "level": "INFO"}
+  },
+  "root": {"handlers": ["console"], "level": "INFO"}
+}
+</code></pre>
+      <p>Dans le code :</p>
+      <pre><code>import logging, json
+logging.config.dictConfig(json.load(open('logging_config.json')))
+logger = logging.getLogger(__name__)
+</code></pre>
+    </section>
+    <section>
+      <h2>Fichier <code>.env</code> d’exemple</h2>
+      <pre><code># .env.example
+HOST=0.0.0.0
+PORT=5000
+GYRO_SAMPLE_RATE=0.05
+# Pour le script de déploiement WinSCP
+PI_USER=pi
+PI_PASS=********
+PI_IP=192.168.1.42
+</code></pre>
+    </section>
+  </main>
+  <footer>
+    © 2026 – Robot Sensor Server
+  </footer>
+</body>
+</html>
