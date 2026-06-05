@@ -1,6 +1,6 @@
 import { applyGyro, applyMove, applyRotation } from "./robot.js"
 import { render } from "./canvas.js"
-
+import { initRadar } from "./radar.js"   // ← ajoute
 const DEFAULT_SPEED = 60
 const MOVE_TICK_MS  = 50  // interval between position updates while key is held
 
@@ -15,6 +15,10 @@ socket.on("connect", () => {
 socket.on("disconnect", () => {
     setStatus("Disconnected", "offline")
 })
+// ← ajoute après la création du socket
+const canvas = document.getElementById("map")
+const ctx    = canvas.getContext("2d")
+initRadar(socket, canvas, ctx)
 
 function setStatus(label, cssClass) {
     const el = document.getElementById("status")
@@ -31,6 +35,13 @@ socket.on("gyro", (data) => {
     applyGyro(data.gyro.z)
     render()
 })
+socket.on("scan_point", (point) => {
+        if (distance > MAX_DISTANCE_CM) return
+        const { angle, distance } = point
+        document.getElementById("dstc").textContent = distance + " cm"
+        console.log(distance)
+
+})
 
 function updateGyroDisplay(gyro, temp) {
     document.getElementById("gx").textContent   = gyro.x.toFixed(2)
@@ -38,6 +49,7 @@ function updateGyroDisplay(gyro, temp) {
     document.getElementById("gz").textContent   = gyro.z.toFixed(2)
     document.getElementById("temp").textContent = temp
 }
+
 
 // --- Keyboard input ---
 

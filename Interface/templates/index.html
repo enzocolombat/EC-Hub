@@ -20,9 +20,14 @@
             <p>Temp: <span id="temp">--</span> °C</p>
         </div>
         <div class="card" id="map-card">
-            <h2>Map</h2>
+            <h2>Map </h2>
             <canvas id="map"></canvas>
+            <button id="btn-scan">Scan</button>
+            <button id="btn-clear">Clear</button>
+            <button id="btn-follow">Free cam</button>
+            <p>Distance : <span id="dstc">--</span> cm</p>
         </div>
+        
         <div class="card" id="controls-card">
             <h2>Controls</h2>
             <div class="controls">
@@ -38,5 +43,6 @@
     <script type="module" src="/static/robot.js"></script>
     <script type="module" src="/static/canvas.js"></script>
     <script type="module" src="/static/socket.js"></script>
+    <script type="module" src="/static/radar.js"></script>
 </body>
 </html>

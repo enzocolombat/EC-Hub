@@ -6,6 +6,11 @@ from flask import Flask, render_template, request
 from flask_socketio import SocketIO
 
 from sensors.gyro import get_data
+from sensors.radar import run_scan
+import threading
+
+_scan_lock = threading.Lock()  # prevents concurrent scans
+
 
 GYRO_SAMPLE_RATE = 0.05  # seconds (20 Hz)
 HOST = "0.0.0.0"
@@ -21,7 +26,25 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 # Tracks active streaming threads per session to prevent duplicates on reconnect
 _active_streams: dict[str, threading.Thread] = {}
 
+@socketio.on("start_scan")
+def on_start_scan():
+    sid = request.sid
 
+    # Reject if a scan is already running
+    if not _scan_lock.acquire(blocking=False):
+        socketio.emit("scan_status", {"status": "busy"}, to=sid)
+        return
+
+    def _run():
+        try:
+            socketio.emit("scan_status", {"status": "started"}, to=sid)
+            run_scan(lambda point: socketio.emit("scan_point", point, to=sid))
+            socketio.emit("scan_status", {"status": "complete"}, to=sid)
+        finally:
+            _scan_lock.release()
+
+    threading.Thread(target=_run, daemon=True, name="radar-scan").start()
+    
 @app.route("/")
 def index():
     return render_template("index.html")

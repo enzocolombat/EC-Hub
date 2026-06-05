@@ -11,7 +11,7 @@ M2_En = 18
 M2_In1 = 17
 M2_In2 = 27
 
-# Definition des pins
+# Definition des pin
 
 M1_En = 26
 M2_In1 = 19
