@@ -76,5 +76,5 @@ Then open `http://localhost:5000` in your browser.
 ## Project Structure
 ### Electrical diagram
 
-<img width="3000" height="1995" alt="Electrical diagram" src="https://github.com/user-attachments/assets/ecfe6f4a-8edb-4343-bbda-1d64ff7cda23" />
-https://app.cirkitdesigner.com/project/c312c10f-f63f-401c-b78d-33313f44d202
+<img width="3000" height="2824" alt="circuit_image(1)" src="https://github.com/user-attachments/assets/c2b83835-cea7-4c58-b1d4-31bb0c1e9464" />
+https://app.cirkitdesigner.com/project/6bdb54de-5863-4ef8-af36-00f08ab2924f
