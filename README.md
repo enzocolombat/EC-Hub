@@ -63,7 +63,7 @@ python robot/main.py
 ```bash
 python interface/app.py
 ```
-heyhey
+
 Then open `http://localhost:5000` in your browser.
 
 ## Features
