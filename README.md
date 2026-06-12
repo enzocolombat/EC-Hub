@@ -1,81 +1,100 @@
-# Objective: Autonomous and useful robotics 🤖 🎯
-Ce dépôt contient une collection de projets robotiques pour Raspberry Pi, incluant l'intégration de capteurs en temps réel et le contrôle via une interface web.
+# Robotics-box 🤖
 
-# Obstacle avoidance car
+A Raspberry Pi 3B based robot with real-time web interface, environment mapping via ultrasonic radar, and gyroscope-driven orientation tracking. Built toward full autonomous navigation.
 
-An autonomous robot built on Raspberry Pi 3B, capable of mapping its environment and being guided by artificial intelligence.
+---
+
 ## Current State
 
 ### Working
-- Real-time gyroscope data streaming (MPU-6050 → Pi → Browser)
-- Bidirectional communication via Flask + SocketIO
-- Robot simulation on 2D canvas (rotation via gyro Z axis)
-- Keyboard controls (arrow keys) with visual feedback
-- Command sending from browser to Pi (action + speed)
+- Real-time gyroscope streaming (MPU-6050 → Pi → Browser via SocketIO)
+- 2D canvas map with robot orientation tracked from gyro Z axis
+- Ultrasonic radar scan (HC-SR04P + MG90S servo) — obstacles plotted on the map in world space
+- Web interface : keyboard controls, scan button, zoomable/scrollable map, follow cam
 
-### Hardware
-- Raspberry Pi 3B
-- MPU-6050 (gyroscope + accelerometer)
-- HC-SR04P ultrasonic sensor (pending integration)
-
-### Coming Soon
-- DC motors + L298N wiring and control
+### In Progress
+- DC motors + L298N driver wiring and control
 - HC-020K encoders for real odometry
-- Ultrasonic sensor for obstacle detection and mapping
-- AI guidance
-### Interface 
+- AI-guided navigation
+
+---
+
+## Demo
+
 https://github.com/user-attachments/assets/d559aa59-24a0-41e6-a908-c51b7c77f7f3
 
-## Project
-### Hardware Requirements
+---
 
-- Raspberry Pi 3B
-- Gyroscope/Accelerometer MPU-6050
-- Ultrasonic sensor HC-SR04P
-- 2x Motor Driver L298N
-- 4x DC Motors
-- 4-wheel chassis
+## Hardware
+
+| Component | Role |
+|---|---|
+| Raspberry Pi 3B | Main controller |
+| MPU-6050 | Gyroscope + accelerometer |
+| HC-SR04P | Ultrasonic distance sensor |
+| MG90S micro servo | Radar rotation |
+| 2× L298N | Motor driver (pending) |
+| 4× DC motors | Drive (pending) |
+| 4× HC-020K encoders | Odometry (pending) |
+
+### Electrical Diagram
+
+<img width="3000" height="1995" alt="Electrical diagram" src="https://github.com/user-attachments/assets/ecfe6f4a-8edb-4343-bbda-1d64ff7cda23" />
+
+https://app.cirkitdesigner.com/project/6bdb54de-5863-4ef8-af36-00f08ab2924f
+
+---
+
+## Stack
+
+- **Pi side** — Python, Flask, Flask-SocketIO, RPi.GPIO
+- **Browser side** — Vanilla JS (ES modules), Canvas 2D, Socket.IO client
+- **Transport** — WebSocket (polling fallback)
+
+---
 
 ## Installation
 
-### On the Raspberry Pi
+### Raspberry Pi
 
 ```bash
 git clone https://github.com/enzocolombat/EnzoColombat-s-hub.git
 cd EnzoColombat-s-hub
-pip install -r requirements-pi.txt
+python3 -m pip install -r requirements-pi.txt --break-system-packages
 ```
-### On the PC
+
+Enable I2C:
+```bash
+sudo raspi-config  # Interface Options → I2C → Enable
+```
+
+### Run
 
 ```bash
-git clone https://github.com/enzocolombat/EnzoColombat-s-hub.git
-cd EnzoColombat-s-hub
-pip install -r requirements-pc.txt
-```
-## Getting Started
-
-### 1. Start the server on the Pi
-```bash
-python robot/main.py
+cd Robot
+python server.py
 ```
 
-### 2. Launch the interface on the PC
-```bash
-python interface/app.py
-```
+Then open `http://<pi-ip>:5000` in your browser.
 
-Then open `http://localhost:5000` in your browser.
-
-## Features
-
-- 🗺️ Real-time environment mapping
-- 🎮 Web-based control interface
-- 📊 Live gyroscope & accelerometer data
-- 🤖 AI-guided navigation
-- 🚗 Autonomous obstacle avoidance
+---
 
 ## Project Structure
-### Electrical diagram
 
-<img width="3000" height="1995" alt="Electrical diagram" src="https://github.com/user-attachments/assets/ecfe6f4a-8edb-4343-bbda-1d64ff7cda23" />
-https://app.cirkitdesigner.com/project/6bdb54de-5863-4ef8-af36-00f08ab2924f
+```
+Robot/
+├── server.py           # Flask + SocketIO server, session management
+├── sensors/
+│   ├── gyro.py         # MPU-6050 reader
+│   └── radar.py        # Servo sweep + ultrasonic scan
+└── motors/             # Coming soon
+
+Interface/
+├── templates/
+│   └── index.html
+└── static/
+    ├── robot.js        # Robot state and physics
+    ├── canvas.js       # Rendering, viewport, zoom
+    ├── radar.js        # Obstacle plotting
+    └── socket.js       # Network and input binding
+```
