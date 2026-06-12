@@ -1,6 +1,6 @@
 # Objective: Autonomous and useful robotics 🤖 🎯
 Ce dépôt contient une collection de projets robotiques pour Raspberry Pi, incluant l'intégration de capteurs en temps réel et le contrôle via une interface web.
-by Enzo Colombat
+
 # Obstacle avoidance car
 
 An autonomous robot built on Raspberry Pi 3B, capable of mapping its environment and being guided by artificial intelligence.
