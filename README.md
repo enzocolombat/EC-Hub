@@ -1,5 +1,6 @@
-# Robotics Hub by Enzo Colombat – Raspberry Pi projects
+# Objective: Autonomous and useful robotics 🤖 🎯
 Ce dépôt contient une collection de projets robotiques pour Raspberry Pi, incluant l'intégration de capteurs en temps réel et le contrôle via une interface web.
+by Enzo Colombat
 # Obstacle avoidance car
 
 An autonomous robot built on Raspberry Pi 3B, capable of mapping its environment and being guided by artificial intelligence.
@@ -76,5 +77,5 @@ Then open `http://localhost:5000` in your browser.
 ## Project Structure
 ### Electrical diagram
 
-<img width="3000" height="2824" alt="circuit_image(1)" src="https://github.com/user-attachments/assets/c2b83835-cea7-4c58-b1d4-31bb0c1e9464" />
+<img width="3000" height="1995" alt="Electrical diagram" src="https://github.com/user-attachments/assets/ecfe6f4a-8edb-4343-bbda-1d64ff7cda23" />
 https://app.cirkitdesigner.com/project/6bdb54de-5863-4ef8-af36-00f08ab2924f
