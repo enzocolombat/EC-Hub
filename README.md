@@ -39,7 +39,7 @@ https://github.com/user-attachments/assets/d559aa59-24a0-41e6-a908-c51b7c77f7f3
 
 ### Electrical Diagram
 
-<img width="3000" height="1995" alt="Electrical diagram" src="https://github.com/user-attachments/assets/ecfe6f4a-8edb-4343-bbda-1d64ff7cda23" />
+<img width="3000" height="1995" alt="Electrical diagram" src="https://github.com/user-attachments/assets/f32e12d7-b2ac-49c4-91d5-1cb5d116c669" />
 
 https://app.cirkitdesigner.com/project/6bdb54de-5863-4ef8-af36-00f08ab2924f
 
