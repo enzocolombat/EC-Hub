@@ -1,3 +1,7 @@
+
+
+
+
 # Robotics-box 🤖
 
 A Raspberry Pi 3B based robot with real-time web interface, environment mapping via ultrasonic radar, and gyroscope-driven orientation tracking. Built toward full autonomous navigation.
@@ -21,7 +25,7 @@ A Raspberry Pi 3B based robot with real-time web interface, environment mapping 
 ## Demo
 
 https://github.com/user-attachments/assets/d559aa59-24a0-41e6-a908-c51b7c77f7f3
-
+[![Demo](https://img.youtube.com/vi/g7UEpGh6UZQ/0.jpg)](https://www.youtube.com/watch?v=g7UEpGh6UZQ)
 ---
 
 ## Hardware
