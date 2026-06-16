@@ -1,16 +1,14 @@
 import threading
 import time
 import logging
+import atexit
 
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO
 
 from sensors.gyro import get_data
 from sensors.radar import run_scan
-import threading
-
-_scan_lock = threading.Lock()  # prevents concurrent scans
-
+from motors.motors import init as motors_init, forward, backward, turn_left, turn_right, stop, set_speed, cleanup
 
 GYRO_SAMPLE_RATE = 0.05  # seconds (20 Hz)
 HOST = "0.0.0.0"
@@ -18,33 +16,18 @@ PORT = 5000
 
 logger = logging.getLogger(__name__)
 
-app = Flask(__name__, 
+app = Flask(__name__,
             template_folder="/home/enzon/interface/templates",
             static_folder="/home/enzon/interface/static")
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-# Tracks active streaming threads per session to prevent duplicates on reconnect
 _active_streams: dict[str, threading.Thread] = {}
+_scan_lock = threading.Lock()
 
-@socketio.on("start_scan")
-def on_start_scan():
-    sid = request.sid
+motors_init()
+atexit.register(cleanup)
 
-    # Reject if a scan is already running
-    if not _scan_lock.acquire(blocking=False):
-        socketio.emit("scan_status", {"status": "busy"}, to=sid)
-        return
 
-    def _run():
-        try:
-            socketio.emit("scan_status", {"status": "started"}, to=sid)
-            run_scan(lambda point: socketio.emit("scan_point", point, to=sid))
-            socketio.emit("scan_status", {"status": "complete"}, to=sid)
-        finally:
-            _scan_lock.release()
-
-    threading.Thread(target=_run, daemon=True, name="radar-scan").start()
-    
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -78,10 +61,44 @@ def on_disconnect(reason):
 def on_command(data):
     action = data.get("action")
     speed  = data.get("speed")
-    if action is None or speed is None:
+    if action is None:
         return
-    # Motor dispatch will go here once hardware is connected
-    logger.info("[CMD] action=%s speed=%s", action, speed)
+
+    if speed is not None:
+        set_speed(speed)
+
+    dispatch = {
+        "forward":  forward,
+        "backward": backward,
+        "left":     turn_left,
+        "right":    turn_right,
+        "stop":     stop,
+    }
+
+    handler = dispatch.get(action)
+    if handler:
+        handler()
+    else:
+        logger.warning("Unknown command: %s", action)
+
+
+@socketio.on("start_scan")
+def on_start_scan():
+    sid = request.sid
+
+    if not _scan_lock.acquire(blocking=False):
+        socketio.emit("scan_status", {"status": "busy"}, to=sid)
+        return
+
+    def _run():
+        try:
+            socketio.emit("scan_status", {"status": "started"}, to=sid)
+            run_scan(lambda point: socketio.emit("scan_point", point, to=sid))
+            socketio.emit("scan_status", {"status": "complete"}, to=sid)
+        finally:
+            _scan_lock.release()
+
+    threading.Thread(target=_run, daemon=True, name="radar-scan").start()
 
 
 def _gyro_stream(sid: str):

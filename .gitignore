@@ -19,6 +19,7 @@ secrets.py
 config.py
 client_secret.json
 Playground/
+Pictures_Videos/private
 # Logs
 *.log
 logs/

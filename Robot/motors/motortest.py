@@ -25,7 +25,7 @@ M4_In2 = 5
 Pins = [[M1_En, M1_In1, M1_In2], [M2_En, M2_In1, M2_In2],
         [M3_En, M3_In1, M3_In2],[M4_En, M4_In1, M4_In2]]
 
-Vitesse = 30
+Vitesse = 25
 # Setup
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
