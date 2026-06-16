@@ -11,9 +11,8 @@ A Raspberry Pi 3B based robot with real-time web interface, environment mapping 
 - 2D canvas map with robot orientation tracked from gyro Z axis
 - Ultrasonic radar scan (HC-SR04P + MG90S servo) — obstacles plotted on the map in world space
 - Web interface : keyboard controls, scan button, zoomable/scrollable map, follow cam
-
-### In Progress
 - DC motors + L298N driver wiring and control
+### In Progress
 - HC-020K encoders for real odometry
 - AI-guided navigation
 
@@ -22,7 +21,7 @@ A Raspberry Pi 3B based robot with real-time web interface, environment mapping 
 ## Demo
 
 https://github.com/user-attachments/assets/d559aa59-24a0-41e6-a908-c51b7c77f7f3
-
+https://github.com/enzocolombat/EC-Hub/blob/main/Pictures_Videos/demo.mp4
 ---
 
 ## Hardware
