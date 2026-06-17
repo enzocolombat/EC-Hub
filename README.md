@@ -21,7 +21,7 @@ A Raspberry Pi 3B based robot with real-time web interface, environment mapping 
 - HC-020K encoders for real odometry
 - AI-guided navigation
 
--(I'm waiting for your idea)
+(I'm waiting for your idea)
 ---
 
 ## Demo
