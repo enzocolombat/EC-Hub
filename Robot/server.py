@@ -64,7 +64,7 @@ def on_command(data):
     if action is None or speed is None:
         return
 
-    set_speed(speed)  # Définit la vitesse
+    set_speed(speed)  # defines speed
 
     if action == "forward":
         move_forward()

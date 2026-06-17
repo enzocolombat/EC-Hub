@@ -52,7 +52,7 @@ def stop_all() -> None:
         stop_motor(i + 1)
     print("All motors stopped.")
 
-# Programme principal
+# main 
 stop_all()
 
 while True:
