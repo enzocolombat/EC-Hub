@@ -58,23 +58,23 @@ M3_Vitesse.start(Vitesse)
 M4_Vitesse.start(Vitesse)
 
 
-def sens1(moteurNum) :
+def forward(moteurNum) :
     GPIO.output(Pins[moteurNum - 1][1], GPIO.HIGH)
     GPIO.output(Pins[moteurNum - 1][2], GPIO.LOW)
     print("Moteur", moteurNum, "tourne dans le sens 1.", Vitesse)
 
 
-def sens2(moteurNum) :
+def reverse(moteurNum) :
     GPIO.output(Pins[moteurNum - 1][1], GPIO.LOW)
     GPIO.output(Pins[moteurNum - 1][2], GPIO.HIGH)
     print("Moteur", moteurNum, "tourne dans le sens 2.", Vitesse)
 
-def arret(moteurNum) :
+def stop(moteurNum) :
     GPIO.output(Pins[moteurNum - 1][1], GPIO.LOW)
     GPIO.output(Pins[moteurNum - 1][2], GPIO.LOW)
     print("Moteur", moteurNum, "arret.")
 
-def arretComplet() :
+def FullStop() :
     GPIO.output(Pins[0][1], GPIO.LOW)
     GPIO.output(Pins[0][2], GPIO.LOW)
     GPIO.output(Pins[1][1], GPIO.LOW)
@@ -84,24 +84,24 @@ def arretComplet() :
     GPIO.output(Pins[3][1], GPIO.LOW)
     GPIO.output(Pins[3][2], GPIO.LOW)
     print("Moteurs arretes.")
-arretComplet()
+FullStop()
 
 
 while True :
  
     # Exemple de motif de boucle
       
-      sens1(1)
-      sens1(2)
-      sens1(3)
-      sens1(4)
+      forward(1)
+      forward(2)
+      forward(3)
+      forward(4)
       sleep(3)
-      arretComplet()
+      FullStop()
       sleep(5)
-      sens2(1)
-      sens2(2)
-      sens2(3)
-      sens2(4)
+      reverse(1)
+      reverse(2)
+      reverse(3)
+      reverse(4)
       sleep(3)
-      arretComplet()
+      FullStop()
       sleep(5)
