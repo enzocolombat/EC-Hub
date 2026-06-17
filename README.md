@@ -17,10 +17,10 @@ A Raspberry Pi 3B based robot with real-time web interface, environment mapping 
 - Web interface : keyboard controls, scan button, zoomable/scrollable map, follow cam
 - DC motors + L298N driver wiring and control
 ### In Progress
-
-
-
-
+(I'm waiting for your idea)
++ SOON
+- Better error handling
++ LATER
 - HC-020K encoders for real odometry
 - AI-guided navigation
 
@@ -47,7 +47,7 @@ https://github.com/user-attachments/assets/d559aa59-24a0-41e6-a908-c51b7c77f7f3
 | 4× HC-020K encoders | Odometry (pending) |
 
 ### Electrical Diagram
-
+(I've already added a power switch to my robot car, but it doesn't show up on the diagram yet; don't forget to add it.)
 <img width="3000" height="2824" alt="circuit_image(2)" src="https://github.com/user-attachments/assets/f32e12d7-b2ac-49c4-91d5-1cb5d116c669" />
 
 
@@ -68,8 +68,8 @@ https://app.cirkitdesigner.com/project/6bdb54de-5863-4ef8-af36-00f08ab2924f
 ### Raspberry Pi
 
 ```bash
-git clone https://github.com/enzocolombat/EnzoColombat-s-hub.git
-cd EnzoColombat-s-hub
+git clone https://github.com/enzocolombat/EC-Hub.git
+cd EC-Hub
 python3 -m pip install -r requirements-pi.txt --break-system-packages
 ```
 
@@ -97,7 +97,11 @@ Robot/
 ├── sensors/
 │   ├── gyro.py         # MPU-6050 reader
 │   └── radar.py        # Servo sweep + ultrasonic scan
-└── motors/             # Coming soon
+    └── ultrasonic.py   
+└── motors/  
+    ├── motor_control.py # main motors control
+    └── motor_test.py # just to test it out
+    └── test_servo.py # just to test it out
 
 Interface/
 ├── templates/
@@ -107,4 +111,5 @@ Interface/
     ├── canvas.js       # Rendering, viewport, zoom
     ├── radar.js        # Obstacle plotting
     └── socket.js       # Network and input binding
+    └── style.css       
 ```
