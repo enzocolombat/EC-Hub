@@ -8,7 +8,7 @@ from flask_socketio import SocketIO
 
 from sensors.gyro import get_data
 from sensors.radar import run_scan
-from motors.motors import init as motors_init, forward, backward, turn_left, turn_right, stop, set_speed, cleanup
+from motors.motor_control import move_forward, move_backward, turn_left, turn_right, stop, set_speed
 
 GYRO_SAMPLE_RATE = 0.05  # seconds (20 Hz)
 HOST = "0.0.0.0"
@@ -60,27 +60,24 @@ def on_disconnect(reason):
 @socketio.on("command")
 def on_command(data):
     action = data.get("action")
-    speed  = data.get("speed")
-    if action is None:
+    speed = data.get("speed")
+    if action is None or speed is None:
         return
 
-    if speed is not None:
-        set_speed(speed)
+    set_speed(speed)  # Définit la vitesse
 
-    dispatch = {
-        "forward":  forward,
-        "backward": backward,
-        "left":     turn_left,
-        "right":    turn_right,
-        "stop":     stop,
-    }
+    if action == "forward":
+        move_forward()
+    elif action == "backward":
+        move_backward()
+    elif action == "left":
+        turn_left()
+    elif action == "right":
+        turn_right()
+    elif action == "stop":
+        stop()
 
-    handler = dispatch.get(action)
-    if handler:
-        handler()
-    else:
-        logger.warning("Unknown command: %s", action)
-
+    logger.info("[CMD] action=%s speed=%s", action, speed)
 
 @socketio.on("start_scan")
 def on_start_scan():
