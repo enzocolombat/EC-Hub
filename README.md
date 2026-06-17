@@ -18,6 +18,7 @@ A Raspberry Pi 3B based robot with real-time web interface, environment mapping 
 - DC motors + L298N driver wiring and control
 ### In Progress 
 - Better error handling
+- Creates clear documentation for the project
 - HC-020K encoders for real odometry
 - AI-guided navigation
 
