@@ -1,99 +1,67 @@
-import logging
+# Robot/motors/motor_control.py
 import RPi.GPIO as GPIO
+from time import sleep
+from config import GPIO as GPIO_PINS, Robot
 
-logger = logging.getLogger(__name__)
+# Initialisation des broches (importées depuis config.py)
+MOTOR_PINS = [
+    [GPIO_PINS.M1_EN, GPIO_PINS.M1_IN1, GPIO_PINS.M1_IN2],  # Moteur 1
+    [GPIO_PINS.M2_EN, GPIO_PINS.M2_IN1, GPIO_PINS.M2_IN2],  # Moteur 2
+]
 
-# --- Pin configuration ---
-MOTORS = {
-    "front_right": {"en": 21, "in1": 20, "in2": 16},  # M1
-    "front_left":  {"en": 18, "in1": 17, "in2": 27},  # M2
-    "rear_left":   {"en": 26, "in1": 6,  "in2": 19},  # M3
-    "rear_right":  {"en": 22, "in1": 13, "in2": 5},   # M4
-}
+# Configuration GPIO
+GPIO.setmode(GPIO.BCM)
+for pin in [pin for motor in MOTOR_PINS for pin in motor]:
+    GPIO.setup(pin, GPIO.OUT)
 
-DEFAULT_SPEED = 25  # PWM duty cycle (0–100)
+# Initialisation PWM pour la vitesse
+M1_PWM = GPIO.PWM(GPIO_PINS.M1_EN, 100)
+M2_PWM = GPIO.PWM(GPIO_PINS.M2_EN, 100)
+M1_PWM.start(Robot.DEFAULT_SPEED)
+M2_PWM.start(Robot.DEFAULT_SPEED)
 
-_pwm: dict[str, GPIO.PWM] = {}
+def set_speed(speed: int) -> None:
+    """Set the speed for both motors (0-100%)."""
+    M1_PWM.ChangeDutyCycle(speed)
+    M2_PWM.ChangeDutyCycle(speed)
 
+def move_forward() -> None:
+    """Move the robot forward."""
+    GPIO.output(GPIO_PINS.M1_IN1, GPIO.HIGH)
+    GPIO.output(GPIO_PINS.M1_IN2, GPIO.LOW)
+    GPIO.output(GPIO_PINS.M2_IN1, GPIO.HIGH)
+    GPIO.output(GPIO_PINS.M2_IN2, GPIO.LOW)
 
-def init():
-    """Initialize GPIO pins and PWM for all motors."""
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setwarnings(False)
+def move_backward() -> None:
+    """Move the robot backward."""
+    GPIO.output(GPIO_PINS.M1_IN1, GPIO.LOW)
+    GPIO.output(GPIO_PINS.M1_IN2, GPIO.HIGH)
+    GPIO.output(GPIO_PINS.M2_IN1, GPIO.LOW)
+    GPIO.output(GPIO_PINS.M2_IN2, GPIO.HIGH)
 
-    for name, pins in MOTORS.items():
-        GPIO.setup(pins["en"],  GPIO.OUT)
-        GPIO.setup(pins["in1"], GPIO.OUT)
-        GPIO.setup(pins["in2"], GPIO.OUT)
+def turn_left() -> None:
+    """Turn the robot left."""
+    GPIO.output(GPIO_PINS.M1_IN1, GPIO.LOW)
+    GPIO.output(GPIO_PINS.M1_IN2, GPIO.HIGH)
+    GPIO.output(GPIO_PINS.M2_IN1, GPIO.HIGH)
+    GPIO.output(GPIO_PINS.M2_IN2, GPIO.LOW)
 
-        pwm = GPIO.PWM(pins["en"], 100)
-        pwm.start(DEFAULT_SPEED)
-        _pwm[name] = pwm
+def turn_right() -> None:
+    """Turn the robot right."""
+    GPIO.output(GPIO_PINS.M1_IN1, GPIO.HIGH)
+    GPIO.output(GPIO_PINS.M1_IN2, GPIO.LOW)
+    GPIO.output(GPIO_PINS.M2_IN1, GPIO.LOW)
+    GPIO.output(GPIO_PINS.M2_IN2, GPIO.HIGH)
 
-    stop()
-    logger.info("Motors initialized")
+def stop() -> None:
+    """Stop both motors."""
+    GPIO.output(GPIO_PINS.M1_IN1, GPIO.LOW)
+    GPIO.output(GPIO_PINS.M1_IN2, GPIO.LOW)
+    GPIO.output(GPIO_PINS.M2_IN1, GPIO.LOW)
+    GPIO.output(GPIO_PINS.M2_IN2, GPIO.LOW)
 
-
-def _set_motor(name: str, forward: bool):
-    """Drive a single motor forward or backward."""
-    pins = MOTORS[name]
-    GPIO.output(pins["in1"], GPIO.HIGH if forward else GPIO.LOW)
-    GPIO.output(pins["in2"], GPIO.LOW  if forward else GPIO.HIGH)
-
-
-def set_speed(speed: int):
-    """Set PWM duty cycle on all motors (0–100)."""
-    speed = max(0, min(100, speed))
-    for pwm in _pwm.values():
-        pwm.ChangeDutyCycle(speed)
-
-
-def forward():
-    _set_motor("front_right", forward=True)
-    _set_motor("front_left",  forward=True)
-    _set_motor("rear_left",   forward=True)
-    _set_motor("rear_right",  forward=True)
-    logger.debug("forward")
-
-
-def backward():
-    _set_motor("front_right", forward=False)
-    _set_motor("front_left",  forward=False)
-    _set_motor("rear_left",   forward=False)
-    _set_motor("rear_right",  forward=False)
-    logger.debug("backward")
-
-
-def turn_left():
-    # Right wheels forward, left wheels backward
-    _set_motor("front_right", forward=True)
-    _set_motor("rear_right",  forward=True)
-    _set_motor("front_left",  forward=False)
-    _set_motor("rear_left",   forward=False)
-    logger.debug("turn_left")
-
-
-def turn_right():
-    # Left wheels forward, right wheels backward
-    _set_motor("front_left",  forward=True)
-    _set_motor("rear_left",   forward=True)
-    _set_motor("front_right", forward=False)
-    _set_motor("rear_right",  forward=False)
-    logger.debug("turn_right")
-
-
-def stop():
-    """Cut power to all motors."""
-    for name, pins in MOTORS.items():
-        GPIO.output(pins["in1"], GPIO.LOW)
-        GPIO.output(pins["in2"], GPIO.LOW)
-    logger.debug("stop")
-
-
-def cleanup():
-    """Stop all motors and release GPIO."""
-    stop()
-    for pwm in _pwm.values():
-        pwm.stop()
+def cleanup() -> None:
+    """Clean up GPIO resources."""
+    M1_PWM.stop()
+    M2_PWM.stop()
     GPIO.cleanup()
-    logger.info("Motors cleaned up")
