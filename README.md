@@ -16,14 +16,12 @@ A Raspberry Pi 3B based robot with real-time web interface, environment mapping 
 - Ultrasonic radar scan (HC-SR04P + MG90S servo) — obstacles plotted on the map in world space
 - Web interface : keyboard controls, scan button, zoomable/scrollable map, follow cam
 - DC motors + L298N driver wiring and control
-### In Progress
-(I'm waiting for your idea)
-SOON
+### In Progress 
 - Better error handling
-LATER
 - HC-020K encoders for real odometry
 - AI-guided navigation
 
+-(I'm waiting for your idea)
 ---
 
 ## Demo
