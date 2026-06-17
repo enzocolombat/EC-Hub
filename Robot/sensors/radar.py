@@ -1,69 +1,55 @@
+# Robot/sensors/radar.py
 import RPi.GPIO as GPIO
 import time
 import logging
+from config import GPIO as GPIO_PINS, Radar, Ultrasonic
 
 logger = logging.getLogger(__name__)
 
-SERVO_PIN  = 12
-TRIG_PIN   = 23
-ECHO_PIN   = 24
-STEP_DEG   = 5
-STEP_DELAY = 0.3
-
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
-GPIO.setup(SERVO_PIN, GPIO.OUT)
-GPIO.setup(TRIG_PIN,  GPIO.OUT)
-GPIO.setup(ECHO_PIN,  GPIO.IN)
-
-_pwm = GPIO.PWM(SERVO_PIN, 50)
+# Initialisation
+_pwm = GPIO.PWM(GPIO_PINS.SERVO, 50)
+GPIO.setup(GPIO_PINS.TRIG, GPIO.OUT)
+GPIO.setup(GPIO_PINS.ECHO, GPIO.IN)
 _pwm.start(0)
 
-
-def _set_angle(angle: float):
+def _set_angle(angle: float) -> None:
     """Move servo to a given angle (0–180°)."""
     duty = 2.5 + (angle / 180.0) * 10.0
     _pwm.ChangeDutyCycle(duty)
-    time.sleep(STEP_DELAY)
+    time.sleep(Radar.STEP_DELAY)
     _pwm.ChangeDutyCycle(0)
 
-
 def _measure_distance() -> float | None:
-    """Trigger a single ultrasonic pulse and return distance in cm."""
-    GPIO.output(TRIG_PIN, False)
+    """Measure distance using HC-SR04P."""
+    GPIO.output(GPIO_PINS.TRIG, False)
     time.sleep(0.05)
 
-    GPIO.output(TRIG_PIN, True)
+    GPIO.output(GPIO_PINS.TRIG, True)
     time.sleep(0.00001)
-    GPIO.output(TRIG_PIN, False)
+    GPIO.output(GPIO_PINS.TRIG, False)
 
-    timeout = time.time() + 1.0
+    timeout = time.time() + Ultrasonic.TIMEOUT_SECONDS
 
-    while GPIO.input(ECHO_PIN) == 0:
-        start = time.time()
-        if start > timeout:
+    while GPIO.input(GPIO_PINS.ECHO) == 0:
+        if time.time() > timeout:
             return None
+    start = time.time()
 
-    while GPIO.input(ECHO_PIN) == 1:
-        end = time.time()
-        if end > timeout:
+    while GPIO.input(GPIO_PINS.ECHO) == 1:
+        if time.time() > timeout:
             return None
+    end = time.time()
 
-    return round(((end - start) * 34300) / 2, 1)
+    return round(((end - start) * Ultrasonic.SPEED_OF_SOUND_CM_PER_S) / 2, 1)
 
-
-def run_scan(on_point: callable):
-    """
-    Sweep 0°→180°→0°, call on_point({angle, distance}) at each valid step.
-    on_point is a callback so server.py can emit each point in real time.
-    """
-    forward  = range(0,   181,  STEP_DEG)
-    backward = range(180, -1,  -STEP_DEG)
+def run_scan(on_point: callable) -> None:
+    """Sweep 0°→180°→0° and call on_point for each valid point."""
+    forward = range(0, 181, Radar.STEP_DEG)
+    backward = range(180, -1, -Radar.STEP_DEG)
 
     for angle in list(forward) + list(backward):
         _set_angle(angle)
         distance = _measure_distance()
-
         if distance is not None:
             logger.debug("angle=%d distance=%.1f", angle, distance)
             on_point({"angle": angle, "distance": distance})

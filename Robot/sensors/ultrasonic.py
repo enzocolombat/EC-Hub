@@ -1,51 +1,42 @@
+# Robot/sensors/ultrasonic.py
 import RPi.GPIO as GPIO
 import time
+import logging
+from config import GPIO as GPIO_PINS, Ultrasonic
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
+logger = logging.getLogger(__name__)
 
-TRIG = 23
-ECHO = 24
+def setup() -> None:
+    """Configure the ultrasonic sensor GPIO pins."""
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(GPIO_PINS.TRIG, GPIO.OUT)
+    GPIO.setup(GPIO_PINS.ECHO, GPIO.IN)
 
-GPIO.setup(TRIG, GPIO.OUT)
-GPIO.setup(ECHO, GPIO.IN)
+def measure_distance() -> float | None:
+    """Measure distance using HC-SR04P."""
+    GPIO.output(GPIO_PINS.TRIG, False)
+    time.sleep(0.05)
 
-def mesure_distance():
-    # Reset
-    GPIO.output(TRIG, False)
-    time.sleep(0.1)
-    
-    # Envoie signal
-    GPIO.output(TRIG, True)
+    GPIO.output(GPIO_PINS.TRIG, True)
     time.sleep(0.00001)
-    GPIO.output(TRIG, False)
+    GPIO.output(GPIO_PINS.TRIG, False)
 
-    timeout = time.time() + 1  # timeout 1 seconde
+    timeout = time.time() + Ultrasonic.TIMEOUT_SECONDS
 
-    while GPIO.input(ECHO) == 0:
-        debut = time.time()
+    while GPIO.input(GPIO_PINS.ECHO) == 0:
         if time.time() > timeout:
-            print("❌ Ultrasonic timeout - check wiring")
+            logger.error("Ultrasonic timeout: no echo start")
             return None
+    start = time.time()
 
-    while GPIO.input(ECHO) == 1:
-        fin = time.time()
+    while GPIO.input(GPIO_PINS.ECHO) == 1:
         if time.time() > timeout:
-            print("❌ ECHO signal blocked")
+            logger.error("Ultrasonic timeout: echo did not end")
             return None
+    end = time.time()
 
-    duree = fin - debut
-    distance = (duree * 34300) / 2
-    return round(distance, 1)
+    return round(((end - start) * Ultrasonic.SPEED_OF_SOUND_CM_PER_S) / 2, 1)
 
-try:
-    print("Démarrage du test...")
-    while True:
-        d = mesure_distance()
-        if d is not None:
-            print(f"✅ Distance : {d} cm")
-        time.sleep(0.5)
-
-except KeyboardInterrupt:
-    print("Clean stop")
+def cleanup() -> None:
+    """Clean up GPIO resources."""
     GPIO.cleanup()
