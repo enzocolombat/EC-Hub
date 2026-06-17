@@ -1,107 +1,66 @@
+# Robot/motors/motor_test.py
 import RPi.GPIO as GPIO
 from time import sleep
+from config import GPIO as GPIO_PINS, Robot
 
+# Configuration
+PINS = [
+    [GPIO_PINS.M1_EN, GPIO_PINS.M1_IN1, GPIO_PINS.M1_IN2],
+    [GPIO_PINS.M2_EN, GPIO_PINS.M2_IN1, GPIO_PINS.M2_IN2],
+    [GPIO_PINS.M3_EN, GPIO_PINS.M3_IN1, GPIO_PINS.M3_IN2],
+    [GPIO_PINS.M4_EN, GPIO_PINS.M4_IN1, GPIO_PINS.M4_IN2],
+]
 
-# Definition des pins
-M1_En = 21
-M1_In1 = 20
-M1_In2 = 16
+SPEED = Robot.DEFAULT_SPEED
 
-M2_En = 18
-M2_In1 = 17
-M2_In2 = 27
-
-# Definition des pin
-
-M3_En = 26
-M3_In1 = 6
-M3_In2 = 19
-
-M4_En = 22
-M4_In1 = 13
-M4_In2 = 5
-
-# Creation d'une liste des pins pour chaque moteur pour compacter la suite du code
-Pins = [[M1_En, M1_In1, M1_In2], [M2_En, M2_In1, M2_In2],
-        [M3_En, M3_In1, M3_In2],[M4_En, M4_In1, M4_In2]]
-
-Vitesse = 25
-# Setup
+# Setup GPIO
 GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
+for pin in [pin for motor in PINS for pin in motor]:
+    GPIO.setup(pin, GPIO.OUT)
 
-GPIO.setup(M1_En, GPIO.OUT)
-GPIO.setup(M1_In1, GPIO.OUT)
-GPIO.setup(M1_In2, GPIO.OUT)
+# Initialisation PWM
+M1_PWM = GPIO.PWM(GPIO_PINS.M1_EN, 100)
+M2_PWM = GPIO.PWM(GPIO_PINS.M2_EN, 100)
+M3_PWM = GPIO.PWM(GPIO_PINS.M3_EN, 100)
+M4_PWM = GPIO.PWM(GPIO_PINS.M4_EN, 100)
+M1_PWM.start(SPEED)
+M2_PWM.start(SPEED)
+M3_PWM.start(SPEED)
+M4_PWM.start(SPEED)
 
-GPIO.setup(M2_En, GPIO.OUT)
-GPIO.setup(M2_In1, GPIO.OUT)
-GPIO.setup(M2_In2, GPIO.OUT)
+def set_forward(motor_num: int) -> None:
+    """Set the specified motor to move forward."""
+    GPIO.output(PINS[motor_num - 1][1], GPIO.HIGH)
+    GPIO.output(PINS[motor_num - 1][2], GPIO.LOW)
+    print(f"Motor {motor_num} moving forward at {SPEED}%")
 
-GPIO.setup(M3_En, GPIO.OUT)
-GPIO.setup(M3_In1, GPIO.OUT)
-GPIO.setup(M3_In2, GPIO.OUT)
+def set_backward(motor_num: int) -> None:
+    """Set the specified motor to move backward."""
+    GPIO.output(PINS[motor_num - 1][1], GPIO.LOW)
+    GPIO.output(PINS[motor_num - 1][2], GPIO.HIGH)
+    print(f"Motor {motor_num} moving backward at {SPEED}%")
 
-GPIO.setup(M4_En, GPIO.OUT)
-GPIO.setup(M4_In1, GPIO.OUT)
-GPIO.setup(M4_In2, GPIO.OUT)
+def stop_motor(motor_num: int) -> None:
+    """Stop the specified motor."""
+    GPIO.output(PINS[motor_num - 1][1], GPIO.LOW)
+    GPIO.output(PINS[motor_num - 1][2], GPIO.LOW)
+    print(f"Motor {motor_num} stopped.")
 
+def stop_all() -> None:
+    """Stop all motors."""
+    for i in range(4):
+        stop_motor(i + 1)
+    print("All motors stopped.")
 
+# Programme principal
+stop_all()
 
-M1_Vitesse = GPIO.PWM(M1_En, 100)
-M2_Vitesse = GPIO.PWM(M2_En, 100)
-M3_Vitesse = GPIO.PWM(M3_En, 100)
-M4_Vitesse = GPIO.PWM(M4_En, 100)
-M1_Vitesse.start(Vitesse)
-M2_Vitesse.start(Vitesse)
-M3_Vitesse.start(Vitesse)
-M4_Vitesse.start(Vitesse)
-
-
-def forward(moteurNum) :
-    GPIO.output(Pins[moteurNum - 1][1], GPIO.HIGH)
-    GPIO.output(Pins[moteurNum - 1][2], GPIO.LOW)
-    print("Moteur", moteurNum, "tourne dans le sens 1.", Vitesse)
-
-
-def reverse(moteurNum) :
-    GPIO.output(Pins[moteurNum - 1][1], GPIO.LOW)
-    GPIO.output(Pins[moteurNum - 1][2], GPIO.HIGH)
-    print("Moteur", moteurNum, "tourne dans le sens 2.", Vitesse)
-
-def stop(moteurNum) :
-    GPIO.output(Pins[moteurNum - 1][1], GPIO.LOW)
-    GPIO.output(Pins[moteurNum - 1][2], GPIO.LOW)
-    print("Moteur", moteurNum, "arret.")
-
-def FullStop() :
-    GPIO.output(Pins[0][1], GPIO.LOW)
-    GPIO.output(Pins[0][2], GPIO.LOW)
-    GPIO.output(Pins[1][1], GPIO.LOW)
-    GPIO.output(Pins[1][2], GPIO.LOW)
-    GPIO.output(Pins[2][1], GPIO.LOW)
-    GPIO.output(Pins[2][2], GPIO.LOW)
-    GPIO.output(Pins[3][1], GPIO.LOW)
-    GPIO.output(Pins[3][2], GPIO.LOW)
-    print("Moteurs arretes.")
-FullStop()
-
-
-while True :
- 
-    # Exemple de motif de boucle
-      
-      forward(1)
-      forward(2)
-      forward(3)
-      forward(4)
-      sleep(3)
-      FullStop()
-      sleep(5)
-      reverse(1)
-      reverse(2)
-      reverse(3)
-      reverse(4)
-      sleep(3)
-      FullStop()
-      sleep(5)
+while True:
+    set_forward(1); set_forward(2); set_forward(3); set_forward(4)
+    sleep(3)
+    stop_all()
+    sleep(5)
+    set_backward(1); set_backward(2); set_backward(3); set_backward(4)
+    sleep(3)
+    stop_all()
+    sleep(5)
