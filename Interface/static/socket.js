@@ -1,6 +1,6 @@
 import { applyGyro, applyMove, applyRotation } from "./robot.js"
 import { render } from "./canvas.js"
-import { initRadar } from "./radar.js"   // ← ajoute
+import { initRadar } from "./radar.js"   
 const DEFAULT_SPEED = 60
 const MOVE_TICK_MS  = 50  // interval between position updates while key is held
 
