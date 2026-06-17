@@ -8,7 +8,7 @@ from flask_socketio import SocketIO
 
 from sensors.gyro import get_data
 from sensors.radar import run_scan
-from motors.motor_control import move_forward, move_backward, turn_left, turn_right, stop, set_speed
+from motors.motor_control import move_forward, move_backward, turn_left, turn_right, stop, set_speed, cleanup
 
 GYRO_SAMPLE_RATE = 0.05  # seconds (20 Hz)
 HOST = "0.0.0.0"
@@ -24,7 +24,7 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 _active_streams: dict[str, threading.Thread] = {}
 _scan_lock = threading.Lock()
 
-motors_init()
+# motors_init()
 atexit.register(cleanup)
 
 

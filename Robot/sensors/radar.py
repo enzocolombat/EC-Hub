@@ -7,10 +7,18 @@ from config import GPIO as GPIO_PINS, Radar, Ultrasonic
 logger = logging.getLogger(__name__)
 
 # Initialisation
-_pwm = GPIO.PWM(GPIO_PINS.SERVO, 50)
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+
+
+GPIO.setup(GPIO_PINS.SERVO, GPIO.OUT)  
 GPIO.setup(GPIO_PINS.TRIG, GPIO.OUT)
 GPIO.setup(GPIO_PINS.ECHO, GPIO.IN)
-_pwm.start(0)
+
+
+_pwm = GPIO.PWM(GPIO_PINS.SERVO, 50)  
+_pwm.start(0)   
 
 def _set_angle(angle: float) -> None:
     """Move servo to a given angle (0–180°)."""

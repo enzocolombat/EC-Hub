@@ -9,6 +9,7 @@ for /f "tokens=1,2 delims==" %%a in (.env) do set %%a=%%b
     "put C:\raspb\Repo\Interface\static\*.css /home/enzon/interface/static/" ^
     "put C:\raspb\Repo\Interface\static\*.js /home/enzon/interface/static/" ^
     "put C:\raspb\Repo\*.txt /home/enzon/" ^
+    "put C:\raspb\Repo\Robot\config.py /home/enzon/Robot/" ^
     "exit"
 echo Transfer complete!
 pause
