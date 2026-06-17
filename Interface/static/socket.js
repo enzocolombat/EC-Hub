@@ -15,7 +15,7 @@ socket.on("connect", () => {
 socket.on("disconnect", () => {
     setStatus("Disconnected", "offline")
 })
-// ← ajoute après la création du socket
+
 const canvas = document.getElementById("map")
 const ctx    = canvas.getContext("2d")
 initRadar(socket, canvas, ctx)
