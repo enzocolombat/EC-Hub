@@ -2,7 +2,7 @@
 
 
 
-# Robotics-box 🤖
+# Mapping robot 🤖
 
 A Raspberry Pi 3B based robot with real-time web interface, environment mapping via ultrasonic radar, and gyroscope-driven orientation tracking. Built toward full autonomous navigation.
 
