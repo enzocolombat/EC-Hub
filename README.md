@@ -43,9 +43,9 @@ https://github.com/user-attachments/assets/d559aa59-24a0-41e6-a908-c51b7c77f7f3
 | MPU-6050 | Gyroscope + accelerometer |
 | HC-SR04P | Ultrasonic distance sensor |
 | MG90S micro servo | Radar rotation |
-| 2× L298N | Motor driver (pending) |
-| 4× DC motors | Drive (pending) |
-| 4× HC-020K encoders | Odometry (pending) |
+| 2× L298N | Motor driver |
+| 4× DC motors | Drive | (maybe only 2 later)
+| 4× HC-020K encoders | Odometry | (maybe only 2 later)
 
 ### Electrical Diagram
 (I've already added a power switch to my robot car, but it doesn't show up on the diagram yet; don't forget to add it.)
@@ -95,6 +95,7 @@ Then open `http://<pi-ip>:5000` in your browser.
 ```
 Robot/
 ├── server.py           # Flask + SocketIO server, session management
+|── config.py
 ├── sensors/
 │   ├── gyro.py         # MPU-6050 reader
 │   └── radar.py        # Servo sweep + ultrasonic scan
