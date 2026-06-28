@@ -26,8 +26,10 @@ A Raspberry Pi 3B based robot with real-time web interface, environment mapping 
 ---
 
 ## Demo
+
 https://github.com/user-attachments/assets/e4f07832-6bdd-4c9d-8355-de826782fe89
 
+https://github.com/user-attachments/assets/675254a2-2268-43c8-bcd5-dd3dfa5acabf
 
 https://github.com/user-attachments/assets/d559aa59-24a0-41e6-a908-c51b7c77f7f3
 
