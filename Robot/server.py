@@ -10,7 +10,8 @@ from sensors.gyro import get_data
 from sensors.radar import run_scan
 from motors.motor_control import move_forward, move_backward, turn_left, turn_right, stop, set_speed, cleanup
 
-GYRO_SAMPLE_RATE = 0.05  # seconds (20 Hz)
+GYRO_SAMPLE_RATE = 0.05   # seconds (20 Hz)
+WATCHDOG_TIMEOUT = 0.5    # seconds — stop motors if no command received
 HOST = "0.0.0.0"
 PORT = 5000
 
@@ -24,8 +25,24 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 _active_streams: dict[str, threading.Thread] = {}
 _scan_lock = threading.Lock()
 
-# motors_init()
+_last_command_time = time.time()
+_watchdog_lock = threading.Lock()
+
 atexit.register(cleanup)
+
+
+def _watchdog_loop():
+    """Stop motors if no command has been received recently."""
+    global _last_command_time
+    while True:
+        time.sleep(0.1)
+        with _watchdog_lock:
+            elapsed = time.time() - _last_command_time
+        if elapsed > WATCHDOG_TIMEOUT:
+            stop()
+
+
+threading.Thread(target=_watchdog_loop, daemon=True, name="motor-watchdog").start()
 
 
 @app.route("/")
@@ -59,12 +76,16 @@ def on_disconnect(reason):
 
 @socketio.on("command")
 def on_command(data):
+    global _last_command_time
+    with _watchdog_lock:
+        _last_command_time = time.time()
+
     action = data.get("action")
-    speed = data.get("speed")
+    speed  = data.get("speed")
     if action is None or speed is None:
         return
 
-    set_speed(speed)  # defines speed
+    set_speed(speed)
 
     if action == "forward":
         move_forward()
@@ -78,6 +99,7 @@ def on_command(data):
         stop()
 
     logger.info("[CMD] action=%s speed=%s", action, speed)
+
 
 @socketio.on("start_scan")
 def on_start_scan():
